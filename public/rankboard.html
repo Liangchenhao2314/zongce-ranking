@@ -1952,7 +1952,7 @@ function renderScholar() {
       reasonHtml = '<span class="ok">综测前'+Math.round(s._pct*100)+'%｜智育'+(s.gpa||0).toFixed(1)+'</span>';
       if (tv===null && RULES[lv] && RULES[lv].tice) reasonHtml += ' <span class="warn">体测待核实</span>';
       var ck2 = (s.stid||s.name); var cet4v = CET4_STATUS[ck2] || 'pending';
-      if (cet4v==='fail') reasonHtml += ' <span class="cet4-tag cet4-fail">四级未过，已降档</span>';
+      if (cet4v==='fail') reasonHtml += ' <span class="cet4-tag cet4-fail" data-cet4="'+esc(ck2)+'" >四级未过，已降档</span>';
       reasonHtml += cet4Html;
       if (s._lvReason && s._lvReason!=='名额内' && s._lvReason!=='按比例门槛（未配置名额）') reasonHtml += '｜'+esc(s._lvReason);
     }
