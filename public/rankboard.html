@@ -2784,6 +2784,7 @@ document.getElementById('fileZy').addEventListener('change', function () {
     document.getElementById('updatePreview').className = 'update-preview show';
     showUpdateMsg('\u6210\u7ee9\u5355\u89e3\u6790\u5b8c\u6210\uff0c\u5171 ' + merged.length + ' \u4eba\uff0c\u7528\u65f6 ' + el + ' \u79d2\u3002\u70b9\u51fb\u4e0b\u65b9[\u5e94\u7528\u6570\u636e]\u751f\u6548\u3002');
     uploadHook(list, 'zy', JSON.stringify(merged));
+    document.getElementById('btnApply').click(); /* 解析成功后自动应用，无需手动点击应用数据按钮 */
   }
   for (var f = 0; f < list.length; f++) { pending++; parseOne(list[f]); }
 });
@@ -2836,6 +2837,7 @@ document.getElementById('fileZc').addEventListener('change', function () {
     document.getElementById('updatePreview').className = 'update-preview show';
     showUpdateMsg('\u7efc\u6d4b\u8868\u89e3\u6790\u5b8c\u6210\uff0c\u5171 ' + merged.length + ' \u4eba\uff0c\u7528\u65f6 ' + el + ' \u79d2\u3002\u70b9\u51fb\u4e0b\u65b9[\u5e94\u7528\u6570\u636e]\u751f\u6548\u3002');
     uploadHook(list, 'zc', JSON.stringify(merged));
+    document.getElementById('btnApply').click(); /* 解析成功后自动应用，无需手动点击应用数据按钮 */
   }
   for (var f = 0; f < list.length; f++) { pending++; parseOne(list[f]); }
 });
