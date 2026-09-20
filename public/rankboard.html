@@ -2068,10 +2068,9 @@ function bindQuotaUpload() {
         var res = parseQuotaWorkbook(wb);
         var msg = document.getElementById('updateMsg');
         if (res.ok) {
-          QUOTA_DATA = res.quota;
-          QUOTA_LOADED = true;
-          if (msg) msg.textContent = '名额表解析成功：'+res.count+' 个专业/年级组合已加载';
-          renderAll();
+          pendingQuota = res.quota;
+          pendingQuotaName = f.name;
+          if (msg) msg.textContent = '名额表解析成功：'+res.count+' 个专业/年级组合。请点击下方[应用数据]生效';
         } else {
           if (msg) msg.textContent = '名额表解析失败：'+res.msg;
         }
@@ -2683,6 +2682,7 @@ function restoreLastData2(mode, cb) {
 
 /* ---------- 十、数据更新（成绩单 / 综测表 分开上传，多班级） ---------- */
 var pendingZyStudents = null, pendingZcStudents = null;
+var pendingQuota = null, pendingQuotaName = '';
 var pendingZyName = '', pendingZcNames = '';
 function readXlsToRows(arrayBuf, cb) {
   try {
@@ -3128,6 +3128,7 @@ function bindEvents() {
     /* 应用数据时不切换当前所在模块：成绩单写入智育数据池、综测表写入综测数据池，视图保持当前模块 */
     if (pendingZyStudents) { applyZyData(pendingZyStudents); pendingZyStudents = null; applied = true; }
     if (pendingZcStudents) { applyZcData(pendingZcStudents); pendingZcStudents = null; applied = true; }
+    if (pendingQuota) { QUOTA_DATA = pendingQuota; QUOTA_LOADED = true; pendingQuota = null; renderAll(); applied = true; }
     if (applied) {
       var up = document.getElementById('updatePanel');
       if (up) up.classList.remove('open');
@@ -3140,6 +3141,7 @@ function bindEvents() {
     }
     document.getElementById('fileZy').value = '';
     document.getElementById('fileZc').value = '';
+    var fqEl = document.getElementById('fileQuota'); if (fqEl) fqEl.value = '';
     var pv = document.getElementById('updatePreview');
     if (pv) { pv.className = 'update-preview'; pv.innerHTML = ''; }
     var wrap = document.getElementById('updateWrap');
