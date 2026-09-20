@@ -2985,6 +2985,9 @@ function setMode(m) {
   for (var zi=0; zi<zcOnly.length; zi++){ zcOnly[zi].style.display = (m==='zy') ? 'none' : ''; }
   var bS = document.getElementById('boardScholar');
   if (bS) { bS.classList.toggle('hidden', m !== 'scholar'); }
+  /* 统一管理智育榜显隐：奖学金模式会给 boardG 加 hidden，切走时必须移除，否则切回综测/智育会残留 hidden 变成单榜 */
+  var bG = document.getElementById('boardG');
+  if (bG) { bG.classList.toggle('hidden', m === 'scholar'); }
   sortStateG = { asc: false, touched: false };
   sortStateC = { asc: false, touched: false };
   /* 切换标签时按模式自己的视图偏好加载 */
