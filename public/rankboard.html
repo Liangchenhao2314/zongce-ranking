@@ -1796,7 +1796,24 @@ function findQuota(gkey) {
 }
 var LV_NAME = {te:'特等', yi:'一等', er:'二等', san:'三等', none:'不参评'};
 var LV_CLS = {te:'lv-te', yi:'lv-yi', er:'lv-er', san:'lv-san', none:'lv-none'};
+function autoDetectCet4() {
+  var detected = 0;
+  for (var i = 0; i < ZC_POOL.length; i++) {
+    var s = ZC_POOL[i];
+    var ck = (s.stid || s.name);
+    if (!ck) continue;
+    if ((CET4_STATUS[ck] || 'pending') !== 'pending') continue;
+    var note = (s.ld && s.ld.note) ? String(s.ld.note) : '';
+    if (/英语\s*四\s*级|CET\s*[-]?\s*4|大学英语\s*四\s*级|四级考试|四级证书|四级\s*证/.test(note)) {
+      CET4_STATUS[ck] = 'pass';
+      detected++;
+    }
+  }
+  if (detected > 0) { try { localStorage.setItem('scholar_cet4_v1', JSON.stringify(CET4_STATUS)); } catch(e){} }
+  return detected;
+}
 function renderScholar() {
+  autoDetectCet4();
   var tbody = document.getElementById('tbodyScholar');
   var stats = document.getElementById('statsScholar');
   var summary = document.getElementById('quotaSummary');
@@ -2014,7 +2031,7 @@ function bindRuleInputs() {
       var cur = CET4_STATUS[ck] || 'pending';
       if (cur==='pending') CET4_STATUS[ck]='pass';
       else if (cur==='pass') CET4_STATUS[ck]='fail';
-      else CET4_STATUS[ck]='pending';
+      else CET4_STATUS[ck]='pass'; /* fail -> pass，点错一键恢复 */
       try { localStorage.setItem('scholar_cet4_v1', JSON.stringify(CET4_STATUS)); } catch(e){}
       renderAll();
     }
