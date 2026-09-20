@@ -3108,11 +3108,9 @@ function bindEvents() {
   document.getElementById('btnViewToggle').addEventListener('click', function () { toggleView(); });
   document.getElementById('btnApply').addEventListener('click', function () {
     var applied = false;
-    /* 跨模式上传：自动切到对应模式再应用 */
-    if (pendingZcStudents && !pendingZyStudents) { setMode('zc'); }
-    else if (pendingZyStudents && !pendingZcStudents) { setMode('zy'); }
-    if (MODE === 'zy' && pendingZyStudents) { applyZyData(pendingZyStudents); pendingZyStudents = null; applied = true; }
-    if (MODE === 'zc' && pendingZcStudents) { applyZcData(pendingZcStudents); pendingZcStudents = null; applied = true; }
+    /* 应用数据时不切换当前所在模块：成绩单写入智育数据池、综测表写入综测数据池，视图保持当前模块 */
+    if (pendingZyStudents) { applyZyData(pendingZyStudents); pendingZyStudents = null; applied = true; }
+    if (pendingZcStudents) { applyZcData(pendingZcStudents); pendingZcStudents = null; applied = true; }
     if (applied) {
       var up = document.getElementById('updatePanel');
       if (up) up.classList.remove('open');
