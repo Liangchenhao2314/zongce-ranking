@@ -603,7 +603,7 @@
         <table class="rank-table" id="scholarTable">
           <thead><tr>
             <th style="width:48px;">序号</th><th>预测等级</th><th>姓名</th><th>班级</th>
-            <th class="score-th">综测分</th><th class="score-th">智育分</th>
+            <th class="score-th">综测分</th><th class="score-th">综测排名</th><th class="score-th">智育分</th><th class="score-th">智育排名</th>
             <th>体测</th><th>判定依据</th>
           </tr></thead>
           <tbody id="tbodyScholar"></tbody>
@@ -1857,6 +1857,7 @@ function renderScholar() {
     for (var i=0;i<g.length;i++){
       var s = g[i];
       s._rank = i+1; s._pct = (i+1)/N;
+      if (i===0) { var byGpa = g.slice().sort(function(a,b){ return (b.gpa||0)-(a.gpa||0); }); for (var gi=0; gi<byGpa.length; gi++){ byGpa[gi]._gpaRank = gi+1; } }
       var deny = scholarDenied(s);
       s._deny = deny;
       if (deny.length) { s._lv='none'; s._cand=''; s._lvReason=deny.join('、'); continue; }
@@ -1974,7 +1975,9 @@ function renderScholar() {
       + '<td class="cell-name">'+esc(s.name)+'</td>'
       + '<td class="cell-cls">'+esc(s.cls)+'</td>'
       + '<td class="cell-score">'+((s.comp==null)?'—':s.comp.toFixed(2))+'</td>'
+      + '<td class="cell-score">'+(s._rank||'—')+'</td>'
       + '<td class="cell-score">'+((s.gpa==null)?'—':s.gpa.toFixed(2))+'</td>'
+      + '<td class="cell-score">'+(s._gpaRank||'—')+'</td>'
       + '<td>'+(tv===null?'—':tv)+'</td>'
       + '<td class="judge-reason">'+reasonHtml+'</td>'
       + '</tr>';
@@ -2524,6 +2527,8 @@ function clearLocalData() {
   try { localStorage.removeItem(VIEW_PREF_KEY); } catch (e) {}
   try { localStorage.removeItem('zcv2_import_zy'); } catch (e) {}
   try { localStorage.removeItem('zcv2_import_zc'); } catch (e) {}
+  try { localStorage.removeItem('manual_quota_v1'); } catch (e) {}
+  MANUAL_QUOTA = null; QUOTA_DATA = {}; QUOTA_LOADED = false;
   HAS_LOCAL_DATA = false;
   if (typeof indexedDB !== 'undefined') {
     try {
