@@ -1149,6 +1149,7 @@ function rowsToZongce(rows, fileClsHint) {
   if (cWarn < 0) { cWarn = findCol(['\u6302\u79d1\u8fdd\u7eaa', '\u6302\u79d1', '\u8fdd\u7eaa']); }
   var cCet4 = findCol(['\u56db\u7ea7', '\u56db\u3001\u516d\u7ea7']);  /* 四级/四六级专用列 */
   var cTice = findCol(['\u4f53\u6d4b']);  /* 体测分列（汇总表直接给体测分） */
+  var cClsCol = findCol(['\u73ed\u7ea7']);  /* 每行班级列（汇总表） */
   if (cName < 0) { return students; }
   /* 3) 课程名行 / 学分行：表头行之后动态扫描。先按模块关键词过滤（跳过 公式说明行/子表头行/姓名学号列），
         剩余文本≥2 且含非数字 → 课程名行；剩余全数字 ≥2 → 学分行。课程列范围不固定，随班级课程实际变化 */
@@ -1277,7 +1278,7 @@ function rowsToZongce(rows, fileClsHint) {
     var stu = {
       name: name,
       stid: cSid >= 0 ? fmt(r[cSid]) : '',
-      cls: cls,
+      cls: cClsCol >= 0 && fmt(r[cClsCol]) !== '' ? clsNorm(fmt(r[cClsCol])) : cls,
       clsTitle: clsTitle,
       grade: clsToGrade(cls),
       major: clsToMajor(cls),
