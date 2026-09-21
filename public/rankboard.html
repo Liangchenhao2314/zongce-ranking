@@ -1990,7 +1990,8 @@ function parseQuotaWorkbook(wb) {
     var g = gm ? (gm[1].length===2 ? '20'+gm[1] : gm[1])+'级' : grade;
     var layer = (major.indexOf('专升本')>=0) ? '专升本' : '本';
     var key = g + '|' + layer;
-    q[key] = { te: toNum(row[teCol])||0, yi: toNum(row[yiCol])||0, er: toNum(row[erCol])||0, san: toNum(row[sanCol])||0 };
+    if (!q[key]) q[key] = { te: 0, yi: 0, er: 0, san: 0 };
+    q[key].te += toNum(row[teCol])||0; q[key].yi += toNum(row[yiCol])||0; q[key].er += toNum(row[erCol])||0; q[key].san += toNum(row[sanCol])||0;
   }
   var n = Object.keys(q).length;
   if (!n) return {ok:false, msg:'名额表未解析到有效行'};
