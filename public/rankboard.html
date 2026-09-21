@@ -1292,7 +1292,7 @@ function rowsToZongce(rows, fileClsHint) {
       ty: { tice: toNum(cv2(cTyTotal - 8)), u: toNum(cv2(cTyTotal - 7)), d: toNum(cv2(cTyTotal - 6)), avg: toNum(cv2(cTyTotal - 5)), base: toNum(cv2(cTyTotal - 4)), add: toNum(cv2(cTyTotal - 3)), sub: toNum(cv2(cTyTotal - 2)), note: fmt(cv2(cTyTotal - 1)), total: toNum(cv2(cTyTotal)) },
       my: { base: toNum(cv2(cMyTotal - 4)), add: toNum(cv2(cMyTotal - 3)), sub: toNum(cv2(cMyTotal - 2)), note: fmt(cv2(cMyTotal - 1)), total: toNum(cv2(cMyTotal)) },
       ld: { add: toNum(cv2(cLdTotal - 3)), sub: toNum(cv2(cLdTotal - 2)), note: fmt(cv2(cLdTotal - 1)), total: toNum(cv2(cLdTotal)) },
-      cet4: (function(){ var cv = cCet4 >= 0 ? fmt(cv2(cCet4)) : ''; return /\u56db\u7ea7|CET\s*[-]?\s*4|425|426/.test(cv); })()
+      cet4: (function(){ var cv = cCet4 >= 0 ? fmt(cv2(cCet4)) : ''; return /\u56db\u7ea7|\u516d\u7ea7|CET\s*[-]?\s*[46]|425|426/.test(cv); })()
     };
     students.push(stu);
   }
