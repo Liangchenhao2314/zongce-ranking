@@ -1148,6 +1148,7 @@ function rowsToZongce(rows, fileClsHint) {
   if (cWarn < 0) { cWarn = findCol(['\u5907\u6ce8']); }
   if (cWarn < 0) { cWarn = findCol(['\u6302\u79d1\u8fdd\u7eaa', '\u6302\u79d1', '\u8fdd\u7eaa']); }
   var cCet4 = findCol(['\u56db\u7ea7', '\u56db\u3001\u516d\u7ea7']);  /* 四级/四六级专用列 */
+  var cTice = findCol(['\u4f53\u6d4b']);  /* 体测分列（汇总表直接给体测分） */
   if (cName < 0) { return students; }
   /* 3) 课程名行 / 学分行：表头行之后动态扫描。先按模块关键词过滤（跳过 公式说明行/子表头行/姓名学号列），
         剩余文本≥2 且含非数字 → 课程名行；剩余全数字 ≥2 → 学分行。课程列范围不固定，随班级课程实际变化 */
@@ -1289,7 +1290,7 @@ function rowsToZongce(rows, fileClsHint) {
       courseSet: (function () { var s = {}; for (var q = 0; q < cnames.length; q++) { if (cnames[q]) { s[normCn(cnames[q])] = 1; } } return s; })(),
       de: { base: toNum(cv2(cDeTotal - 4)), add: toNum(cv2(cDeTotal - 3)), sub: toNum(cv2(cDeTotal - 2)), note: fmt(cv2(cDeTotal - 1)), total: toNum(cv2(cDeTotal)) },
       ky: { note: fmt(cv2(cKyTotal - 1)), total: toNum(cv2(cKyTotal)) },
-      ty: { tice: toNum(cv2(cTyTotal - 8)), u: toNum(cv2(cTyTotal - 7)), d: toNum(cv2(cTyTotal - 6)), avg: toNum(cv2(cTyTotal - 5)), base: toNum(cv2(cTyTotal - 4)), add: toNum(cv2(cTyTotal - 3)), sub: toNum(cv2(cTyTotal - 2)), note: fmt(cv2(cTyTotal - 1)), total: toNum(cv2(cTyTotal)) },
+      ty: { tice: cTice >= 0 ? toNum(cv2(cTice)) : toNum(cv2(cTyTotal - 8)), u: toNum(cv2(cTyTotal - 7)), d: toNum(cv2(cTyTotal - 6)), avg: toNum(cv2(cTyTotal - 5)), base: toNum(cv2(cTyTotal - 4)), add: toNum(cv2(cTyTotal - 3)), sub: toNum(cv2(cTyTotal - 2)), note: fmt(cv2(cTyTotal - 1)), total: toNum(cv2(cTyTotal)) },
       my: { base: toNum(cv2(cMyTotal - 4)), add: toNum(cv2(cMyTotal - 3)), sub: toNum(cv2(cMyTotal - 2)), note: fmt(cv2(cMyTotal - 1)), total: toNum(cv2(cMyTotal)) },
       ld: { add: toNum(cv2(cLdTotal - 3)), sub: toNum(cv2(cLdTotal - 2)), note: fmt(cv2(cLdTotal - 1)), total: toNum(cv2(cLdTotal)) },
       cet4: (function(){ var cv = cCet4 >= 0 ? fmt(cv2(cCet4)) : ''; return /\u56db\u7ea7|\u516d\u7ea7|CET\s*[-]?\s*[46]|425|426/.test(cv); })()
