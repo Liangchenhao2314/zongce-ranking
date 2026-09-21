@@ -1800,23 +1800,7 @@ function findQuota(gkey) {
 }
 var LV_NAME = {te:'特等', yi:'一等', er:'二等', san:'三等', none:'不参评'};
 var LV_CLS = {te:'lv-te', yi:'lv-yi', er:'lv-er', san:'lv-san', none:'lv-none'};
-function autoDetectCet4() {
-  var detected = 0;
-  for (var i = 0; i < ZC_POOL.length; i++) {
-    var s = ZC_POOL[i];
-    var ck = (s.stid || s.name);
-    if (!ck) continue;
-    if ((CET4_STATUS[ck] || 'pending') !== 'pending') continue;
-    if (s.cet4) {
-      CET4_STATUS[ck] = 'pass';
-      detected++;
-    }
-  }
-  if (detected > 0) { try { localStorage.setItem('scholar_cet4_v1', JSON.stringify(CET4_STATUS)); } catch(e){} }
-  return detected;
-}
 function renderScholar() {
-  autoDetectCet4();
   var tbody = document.getElementById('tbodyScholar');
   var stats = document.getElementById('statsScholar');
   var summary = document.getElementById('quotaSummary');
@@ -1860,9 +1844,8 @@ function renderScholar() {
       var gpa = s.gpa||0;
       var tv = ticeOf(s);
       var ticeOk = (tv===null || tv>=75);
-      var ck = (s.stid||s.name);
-      var cet4 = CET4_STATUS[ck] || 'pending';
-      var cet4Block = (cet4 === 'fail');
+      var cet4 = s.cet4 ? 'pass' : 'fail';
+      var cet4Block = !s.cet4;
       if (s._pct<=RULES.te.pct && gpa>=RULES.te.gpa && (!RULES.te.tice || ticeOk) && !cet4Block) s._cand='te';
       else if (s._pct<=RULES.yi.pct && gpa>=RULES.yi.gpa && (!RULES.yi.tice || ticeOk) && !cet4Block) s._cand='yi';
       
@@ -1940,13 +1923,11 @@ function renderScholar() {
     var s = allRows[i];
     var lv = s._lv||'none';
     var tv = ticeOf(s);
-    var ck = (s.stid||s.name);
-    var cet4 = CET4_STATUS[ck] || 'pending';
+    var cet4 = s.cet4 ? 'pass' : 'fail';
     var cet4Html = '';
     if (lv==='te'||lv==='yi') {
-      if (cet4==='pass') cet4Html = ' <span class="cet4-tag cet4-pass" data-cet4="'+esc(ck)+'">四级已过 ✓</span>';
-      else if (cet4==='fail') cet4Html = ' <span class="cet4-tag cet4-fail" data-cet4="'+esc(ck)+'">四级未过 ✗</span>';
-      else cet4Html = ' <span class="cet4-tag cet4-pending" data-cet4="'+esc(ck)+'">四级待核实（点击）</span>';
+      if (cet4==='pass') cet4Html = ' <span class="cet4-tag cet4-pass">四级已过 ✓</span>';
+      else cet4Html = ' <span class="cet4-tag cet4-fail">四级未过 ✗</span>';
     }
     var reasonHtml = '';
     if (lv==='none') {
@@ -1954,8 +1935,7 @@ function renderScholar() {
     } else {
       reasonHtml = '<span class="ok">综测前'+Math.round(s._pct*100)+'%｜智育'+(s.gpa||0).toFixed(1)+'</span>';
       if (tv===null && RULES[lv] && RULES[lv].tice) reasonHtml += ' <span class="warn">体测待核实</span>';
-      var ck2 = (s.stid||s.name); var cet4v = CET4_STATUS[ck2] || 'pending';
-      if (cet4v==='fail') reasonHtml += ' <span class="cet4-tag cet4-fail" data-cet4="'+esc(ck2)+'" >四级未过，已降档</span>';
+      if (!s.cet4) reasonHtml += ' <span class="cet4-tag cet4-fail">四级未过，已降档</span>';
       reasonHtml += cet4Html;
       if (s._lvReason && s._lvReason!=='名额内' && s._lvReason!=='按比例门槛（未配置名额）') reasonHtml += '｜'+esc(s._lvReason);
     }
@@ -2026,19 +2006,6 @@ function bindRuleInputs() {
   var sn = document.getElementById('ruleSpecialNote');
   if (sn) { sn.addEventListener('input', function(){ RULES.specialNote = sn.value; try{localStorage.setItem('scholar_rules_v1', JSON.stringify(RULES));}catch(e){} renderAll(); }); }
 }
-/* 四级核实点击 */
-  document.addEventListener('click', function(e){
-    var t = e.target;
-    if (t && t.classList && t.classList.contains('cet4-tag')) {
-      var ck = t.getAttribute('data-cet4');
-      var cur = CET4_STATUS[ck] || 'pending';
-      if (cur==='pending') CET4_STATUS[ck]='pass';
-      else if (cur==='pass') CET4_STATUS[ck]='fail';
-      else CET4_STATUS[ck]='pass'; /* fail -> pass，点错一键恢复 */
-      try { localStorage.setItem('scholar_cet4_v1', JSON.stringify(CET4_STATUS)); } catch(e){}
-      renderAll();
-    }
-  });
 function bindOtherRuleUploads() {
   var map = [['fileRuleNotice','noticeInfoLink','评定通知'], ['fileRuleSpecial','specialInfoLink','特别说明'], ['fileRuleMethod','methodInfoLink','评定办法']];
   for (var i=0;i<map.length;i++){
