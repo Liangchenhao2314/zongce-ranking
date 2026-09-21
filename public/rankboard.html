@@ -470,6 +470,18 @@
           </label>
           <a class="tpl-link" href="#" id="quotaInfoLink">名额表按 专业/年级/各等级名额 自动解析</a>
         </div>
+        <div class="file-col scholar-only" style="display:none;" id="manualQuotaBox">
+          <label class="file-label" style="flex-direction:column; align-items:flex-start; gap:6px;">
+            手动填写各等级名额（不用上传表）
+            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+              <span>特等 <input type="number" id="mqTe" min="0" style="width:70px;" placeholder="0"></span>
+              <span>一等 <input type="number" id="mqYi" min="0" style="width:70px;" placeholder="0"></span>
+              <span>二等 <input type="number" id="mqEr" min="0" style="width:70px;" placeholder="0"></span>
+              <span>三等 <input type="number" id="mqSan" min="0" style="width:70px;" placeholder="0"></span>
+              <button type="button" id="mqApply" class="btn-primary" style="padding:4px 14px; cursor:pointer;">应用名额</button>
+            </div>
+          </label>
+        </div>
         <div class="file-col scholar-only" style="display:none;">
           <label class="file-label">
             上传评定工作通知
@@ -2063,6 +2075,31 @@ function bindQuotaUpload() {
       }
     };
     reader.readAsArrayBuffer(f);
+  });
+  var btn = document.getElementById('mqApply');
+  if (btn) btn.addEventListener('click', function(){
+    var te = parseInt(document.getElementById('mqTe').value,10)||0;
+    var yi = parseInt(document.getElementById('mqYi').value,10)||0;
+    var er = parseInt(document.getElementById('mqEr').value,10)||0;
+    var san = parseInt(document.getElementById('mqSan').value,10)||0;
+    if (!te && !yi && !er && !san) {
+      var m0 = document.getElementById('updateMsg');
+      if (m0) m0.textContent = '请至少填写一个等级的名额';
+      return;
+    }
+    var keys = {};
+    for (var i=0;i<ZC_POOL.length;i++){
+      var k = scholarGroupKey(ZC_POOL[i]);
+      keys[k] = true;
+    }
+    QUOTA_DATA = {};
+    for (var k2 in keys) {
+      QUOTA_DATA[k2] = {te:te, yi:yi, er:er, san:san};
+    }
+    QUOTA_LOADED = true;
+    var msg = document.getElementById('updateMsg');
+    if (msg) msg.textContent = '已应用手动名额：特等'+te+'、一等'+yi+'、二等'+er+'、三等'+san;
+    renderAll();
   });
 }
 
