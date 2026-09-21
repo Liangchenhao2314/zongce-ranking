@@ -1901,14 +1901,24 @@ function renderScholar() {
   }
   if (summary) {
     var hasCap = (agg.te.cap+agg.yi.cap+agg.er.cap+agg.san.cap) > 0;
-    function card(cls, name, get, cap) {
-      var capTxt = hasCap ? ('名额 '+cap) : '—';
-      return '<div class="q-card '+cls+'"><div class="q-lv">'+name+'</div><div class="q-num">'+get+'</div><div class="q-of">'+capTxt+'</div></div>';
+    function condTxt(r) {
+      var parts = ['综测前' + Math.round(r.pct*100) + '%', '智育≥' + r.gpa];
+      if (r.tice) parts.push('体测≥' + r.tice);
+      if (r.cet4) parts.push('四级通过');
+      return parts.join('｜');
     }
-    summary.innerHTML = card('q-te','特等奖学金',agg.te.get,agg.te.cap)
-      + card('q-yi','一等奖学金',agg.yi.get,agg.yi.cap)
-      + card('q-er','二等奖学金',agg.er.get,agg.er.cap)
-      + card('q-san','三等奖学金',agg.san.get,agg.san.cap)
+    function card(cls, name, get, cap, cond) {
+      var capTxt = hasCap ? ('名额 '+cap) : '—';
+      return '<div class="q-card '+cls+'"><div class="q-lv">'+name+'</div><div class="q-num">'+get+'</div><div class="q-of">'+capTxt+'</div><div class="q-cond">'+cond+'</div></div>';
+    }
+    var rTe = {pct:RULES.te.pct, gpa:RULES.te.gpa, tice:RULES.te.tice, cet4:true};
+    var rYi = {pct:RULES.yi.pct, gpa:RULES.yi.gpa, tice:RULES.yi.tice, cet4:true};
+    var rEr = {pct:RULES.er.pct, gpa:RULES.er.gpa, tice:RULES.er.tice, cet4:false};
+    var rSan = {pct:RULES.san.pct, gpa:RULES.san.gpa, tice:RULES.san.tice, cet4:false};
+    summary.innerHTML = card('q-te','特等奖学金',agg.te.get,agg.te.cap,condTxt(rTe))
+      + card('q-yi','一等奖学金',agg.yi.get,agg.yi.cap,condTxt(rYi))
+      + card('q-er','二等奖学金',agg.er.get,agg.er.cap,condTxt(rEr))
+      + card('q-san','三等奖学金',agg.san.get,agg.san.cap,condTxt(rSan))
       + (hasCap ? '' : '<div class="q-card q-none"><div class="q-lv">名额表</div><div class="q-num">未上传</div><div class="q-of">按比例门槛预测</div></div>');
   }
   if (stats) stats.textContent = '共 '+allRows.length+' 人' + (QUOTA_LOADED ? '（已加载名额表）' : '（未加载名额表，按比例门槛预测）');
